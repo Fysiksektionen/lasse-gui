@@ -1,0 +1,5 @@
+.DS_STORE
+.vscode
+.module-cache
+.swp
+node_modules
