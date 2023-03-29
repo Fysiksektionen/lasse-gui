@@ -9,6 +9,23 @@ const inter = Inter({ subsets: ['latin'] })
 export default function Home() {
   const navLinkClassName = "text-xl text-white mb-4 mx-4 flex-1 font-mono font-light tracking-widest"
   const [navOpen, setNavOpen] = useState(false)
+  const [inputNum, setInputNum] = useState(2)
+  const [sequenceNum, setSequenceNum] = useState(2)
+  const [outputNum, setOutputNum] = useState(2)
+
+  // Make box component
+
+  // Click listener
+  const handleClick = (buttonId) => {
+    console.log(buttonId)
+  }
+
+  const resetNums = () => {
+    setInputNum(1)
+    setSequenceNum(1)
+    setOutputNum(1)
+  }
+
   const toggleNav = () => {
     setNavOpen(!navOpen)
   }
@@ -20,8 +37,8 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className='bg-blue-500 min-h-screen'>
-          <button onClick={toggleNav} className="z-10 aspect-square top-2 left-2 text-center w-12 bg-white fixed rounded-xl text-3xl">O</button>
+      <main className='bg-blue-500 min-h-screen h-full'>
+          <button onClick={toggleNav} className="z-10 aspect-square top-2 left-2 text-center w-12 bg-white fixed rounded-xl text-3xl">{navOpen ? "⧥" : "≡"}</button>
           <aside className={navOpen ? "border-2 transistion-all duration-500 fixed h-screen bg-red-300" : "h-screen fixed transition-all -translate-x-full border-2 duration-500"}>
             <nav className="mx-8 pt-32 flex flex-col h-full justify-between transition-all duration-500 delay-300 ">
               <p className={navLinkClassName}>Hejjjasdfasdfsafdee</p>
@@ -33,8 +50,36 @@ export default function Home() {
           </aside>
           <div className="">
               <h1 className='text-white font-mono text-7xl text-center'>Hello everybody</h1>
+              <buttton className="bg-red-400 fixed top-4 right-4 p-8 rounded-xl" onClick={resetNums}>R</buttton>
+              <div className="mx-auto grid grid-cols-3 gap-8 my-20 text-7xl">
+              <div id="input" className="flex flex-col gap-8 items-stretch">
+                <button className="bg-zinc-400 rounded-xl text-white" onClick={() => setInputNum(inputNum + 1)}>+</button>
+                {Array.from(Array(inputNum).keys()).map((index) => (
+                  <button key={index} onClick={() => handleClick(index)} className="bg-red-500 px-8 py-4 rounded-xl">
+                    {index}
+                  </button>
+                  ))}
+              </div>
+              <div id="sequence" className="flex flex-col gap-8 items-stretch">
+                <button className="bg-zinc-400 rounded-xl text-white" onClick={() => setSequenceNum(sequenceNum + 1)}>+</button>
+                {Array.from(Array(sequenceNum).keys()).map((index) => (
+                  <button key={index} onClick={() => handleClick(index)} className="bg-red-500 px-8 py-4 rounded-xl">
+                    {index}
+                  </button>
+                  ))}
+              </div>
+              <div id="output" className="flex flex-col gap-8 items-stretch">
+                <button className="bg-zinc-400 rounded-xl text-white" onClick={() => setOutputNum(outputNum + 1)}>+</button>
+                {Array.from(Array(outputNum).keys()).map((index) => (
+                  <button key={index} onClick={() => handleClick(index)} className="bg-red-500 px-8 py-4 rounded-xl">
+                    {index}
+                  </button>
+                  ))}
+              </div>
 
-              <p className='text-xl text-black font-mono'>  
+              </div>
+
+              {false && <p className='text-xl text-black font-mono'>  
                 loasfökljgnwljkhzbgh öousdbrgbswdlfhgovleabf
                 loasfökljgnwljkhzbgh öousdbrgbswdlfhgovleabf
                 loasfökljgnwljkhzbgh öousdbrgbswdlfhgovleabf
@@ -64,7 +109,7 @@ export default function Home() {
                 loasfökljgnwljkhzbgh öousdbrgbswdlfhgovleabf
                 loasfökljgnwljkhzbgh öousdbrgbswdlfhgovleabf
                 loasfökljgnwljkhzbgh öousdbrgbswdlfhgovleabf
-              </p>
+              </p>}
           </div>
       </main>
     </>
