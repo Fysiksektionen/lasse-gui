@@ -9,11 +9,15 @@ const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
   const navLinkClassName = "text-xl text-white mb-4 mx-4 flex-1 font-mono font-light tracking-widest"
+  const buttonClassName = "bg-red-500 px-8 py-4 rounded-xl "
+  const buttonActivatedClassName = buttonClassName + "bg-green-500"
+  const buttonDeactivatedClassName = buttonClassName + "bg-gray-500 pointer-events-none"
   const [navOpen, setNavOpen] = useState(false)
   const [inputNum, setInputNum] = useState(0)
   const [sequenceNum, setSequenceNum] = useState(0)
   const [outputNum, setOutputNum] = useState(0)
   const [screenState, setScreenState] = useState(null)
+  const [isSelecting, setIsSelecting] = useState(false)
 
   const [inpToSeq, setInpToSeq] = useState([])
   const [seqToOut, setSeqToOut] = useState([])
@@ -23,10 +27,6 @@ export default function Home() {
   const inputRefs = useRef(new Array())
   const sequenceRefs = useRef(new Array())
   const outputRefs = useRef(new Array())
-
-  const handleClick = (buttonId) => {
-    console.log(inpToSeq, seqToOut)
-  }
 
   const resetNums = () => {
     setInputNum(0)
@@ -109,6 +109,65 @@ export default function Home() {
     x2 + ',' + y2
   }
 
+  const handleClick = (buttonRef) => {
+    if (isSelecting) {
+      let [allowedRefs, nonAllowedRefs] = getAllowedConnections(buttonRef)
+
+      allowedRefs.forEach(ref => {
+        ref.className = buttonActivatedClassName
+      });
+      nonAllowedRefs.forEach(ref => {
+        ref.className = buttonDeactivatedClassName
+        ref.onClick = () => {}
+      });
+      buttonRef.className = buttonClassName
+    } else {
+      let allRefs = inputRefs.current.concat(sequenceRefs.current).concat(outputRefs.current) 
+      allRefs.forEach(ref => {
+        if (ref) {
+          ref.className = buttonClassName
+        }
+      });
+    }
+    setIsSelecting(!isSelecting)
+  }
+
+  const getAllowedConnections = (buttonRef) => {
+    if (!buttonRef) {
+      return [], inputRefs.current.concat(sequenceRefs.current).concat(outputRefs.current) 
+    }
+    let allowed = []
+    if (isRefType(buttonRef, inputRefs.current)) {
+      // TODO
+      allowed = sequenceRefs.current ? sequenceRefs.current : []
+    } else if (isRefType(buttonRef, sequenceRefs.current)) {
+      // TODO
+      allowed = outputRefs.current ? outputRefs.current : []
+    } else if  (isRefType(buttonRef, outputRefs.current)) {
+      // TODO
+    }
+    return [allowed, getNonAllowedRefs(buttonRef, allowed)]
+  }
+
+  const getNonAllowedRefs = (buttonRef, allowedRefs) => {
+    let allRefs = inputRefs.current.concat(sequenceRefs.current).concat(outputRefs.current) 
+    let nonAllowed = []
+    for (let i = 0; i < allRefs.length; i++) {
+      let ref = allRefs[i]
+      if (!ref) {
+        continue
+      }
+      if ((ref!=buttonRef) && !(isRefType(ref, allowedRefs)))  {
+        nonAllowed.push(ref)
+      }
+    }
+    return nonAllowed
+  }
+
+  const isRefType = (ref, refArray) => {
+    return refArray.includes(ref)
+  }
+
   const updateButtons = (column, add, index=-1) => {
     const delta = add ? 1 : -1
     if (column == 'i') {
@@ -183,7 +242,7 @@ export default function Home() {
               <div id="input" className="flex flex-col gap-8 items-stretch">
                 <button className="bg-zinc-400 rounded-xl text-white" onClick={() => updateButtons('i', true)}>+</button>
                 {Array.from(Array(inputNum).keys()).map((index) => (
-                  <button key={index} ref={(element) => inputRefs.current[index] = element} onClick={() => handleClick(index)} className="bg-red-500 px-8 py-4 rounded-xl">
+                  <button key={index} ref={(element) => inputRefs.current[index] = element} onClick={() => handleClick(inputRefs.current[index])} className={buttonClassName}>
                     {index}
                   </button>
                   ))}
@@ -191,7 +250,7 @@ export default function Home() {
               <div id="sequence" className="flex flex-col gap-8 items-stretch">
                 <button className="bg-zinc-400 rounded-xl text-white" onClick={() => updateButtons('s', true)}>+</button>
                 {Array.from(Array(sequenceNum).keys()).map((index) => (
-                  <button key={index} ref={(element) => sequenceRefs.current[index] = element} onClick={() => handleClick(index)} className="bg-red-500 px-8 py-4 rounded-xl">
+                  <button key={index} ref={(element) => sequenceRefs.current[index] = element} onClick={() => handleClick(sequenceRefs.current[index])} className={buttonClassName}>
                     {index + 'a'}
                   </button>
                   ))}
@@ -199,7 +258,7 @@ export default function Home() {
               <div id="output" className="flex flex-col gap-8 items-stretch">
                 <button className="bg-zinc-400 rounded-xl text-white" onClick={() => updateButtons('o', true)}>+</button>
                 {Array.from(Array(outputNum).keys()).map((index) => (
-                  <button key={index} ref={(element) => outputRefs.current[index] = element} onClick={() => handleClick(index)} className="bg-red-500 px-8 py-4 rounded-xl">
+                  <button key={index} ref={(element) => outputRefs.current[index] = element} onClick={() => handleClick(outputRefs.current[index])} className={buttonClassName}>
                     {index + 'b'}
                   </button>
                   ))}
