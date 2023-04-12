@@ -28,6 +28,8 @@ export default function Home() {
   const sequenceRefs = useRef(new Array())
   const outputRefs = useRef(new Array())
 
+  const [selected, setSelected] = useState(null)
+
   const resetNums = () => {
     setInputNum(0)
     setSequenceNum(0)
@@ -110,7 +112,10 @@ export default function Home() {
   }
 
   const handleClick = (buttonRef) => {
-    if (isSelecting) {
+    let selecting = !isSelecting
+    setIsSelecting(selecting)
+    if (selecting) {
+      setSelected(buttonRef)
       let [allowedRefs, nonAllowedRefs] = getAllowedConnections(buttonRef)
 
       allowedRefs.forEach(ref => {
@@ -128,8 +133,18 @@ export default function Home() {
           ref.className = buttonClassName
         }
       });
+      if (selected) {
+        if (selected != buttonRef) {
+          let indexFrom = 0;
+          let indexTo = 0;
+          let conns = [...inpToSeq]
+          console.log(conns)
+          conns[indexFrom][indexTo] = 1
+          console.log(conns)
+          setInpToSeq(conns)
+        }
+      }
     }
-    setIsSelecting(!isSelecting)
   }
 
   const getAllowedConnections = (buttonRef) => {
